@@ -1,0 +1,39 @@
+/* Login.css */
+:root{
+  font-family: "Inter", sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+.loginContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: dark;
+}
+  
+.loginContainer h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+  
+.loginForm {
+  margin-top: 40px;
+}
+
+.loginFormButton{
+  margin-top: 20px;
+}
+
+.logo {
+  width: 30%;
+  margin-bottom: 20px;
+}
+
+.header{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
