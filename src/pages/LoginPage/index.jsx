@@ -46,13 +46,16 @@ export default function SignInSide() {
           password: data.get("password"),
         })
         .then(function (response) {
-          // Successful login
+          sessionStorage.setItem("userToken", response.data.data.token);
           console.log(response);
           Swal.fire({
             icon: "success",
             title: "Login Successful",
-            text: "You have successfully logged in.",
+            text: "You have successfully logged in. You will be redirected to the dashboard soon...",
           });
+          setInterval(() => {
+            window.location.href = "/dashboard";
+          }, 2000);
         })
         .catch(function (error) {
           // Error handling
@@ -152,13 +155,13 @@ export default function SignInSide() {
               >
                 Log In
               </Button>
-              <Grid container>
+              {/* <Grid container>
                 <Grid item>
                   <Link href="#" variant="body2">
                     {"Register Account"}
                   </Link>
                 </Grid>
-              </Grid>
+              </Grid> */}
               <Copyright sx={{ mt: 5 }} />
             </Box>
           </Box>
