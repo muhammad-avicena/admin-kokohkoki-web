@@ -36,54 +36,54 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function SignInSide() {
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
+    const loadingAlert = Swal.fire({
+      icon: "info",
+      title: "Loading",
+      text: "Please wait...",
+      showCancelButton: false,
+      showConfirmButton: false,
+      allowOutsideClick: false,
+    });
     try {
-      axios
-        .post("http://localhost:5001/api/v1/auth/login", {
+      const data = new FormData(event.currentTarget);
+      const response = await axios.post(
+        "http://localhost:5001/api/v1/auth/login",
+        {
           username: data.get("username"),
           password: data.get("password"),
-        })
-        .then(function (response) {
-          sessionStorage.setItem("userToken", response.data.data.token);
-          console.log(response);
-          Swal.fire({
-            icon: "success",
-            title: "Login Successful",
-            text: "You have successfully logged in. You will be redirected to the dashboard soon...",
-          });
-          setInterval(() => {
-            window.location.href = "/dashboard";
-          }, 2000);
-        })
-        .catch(function (error) {
-          // Error handling
-          console.log(error, "isi error");
-          if (error.response) {
-            // Server internal error or network issue
-            Swal.fire({
-              icon: "error",
-              title: "Internal Server Error",
-              text: "An error occurred while processing your request. Please try again later.",
-            });
-          }
-          if (error.response.status === 401) {
-            // Login failed with a response from the server
-            Swal.fire({
-              icon: "error",
-              title: "Login Failed",
-              text: "Incorrect username or password. Please try again.",
-            });
-          }
-        });
-    } catch (error) {
-      console.error(error);
+        }
+      );
+      sessionStorage.setItem("userToken", response.data.data.token);
+      loadingAlert.close();
+
       Swal.fire({
-        icon: "error",
-        title: "Internal Server Error",
-        text: "An error occurred while processing your request. Please try again later.",
+        icon: "success",
+        title: "Login Successful",
+        text: "You have successfully logged in. You will be redirected to the dashboard soon...",
       });
+
+      setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 2000);
+    } catch (error) {
+      loadingAlert.close(); 
+      console.log(error, "isi error");
+      if (error.code === "ERR_NETWORK") {
+        Swal.fire({
+          icon: "error",
+          title: "Internal Server Error",
+          text: "An error occurred while processing your request. Please try again later.",
+        });
+      } 
+      if (error.response.status === 401) {
+        Swal.fire({
+          icon: "error",
+          title: "Login Failed",
+          text: "Incorrect username or password. Please try again.",
+        });
+      }
     }
   };
 
