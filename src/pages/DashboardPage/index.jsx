@@ -29,6 +29,8 @@ const validationSchema = Yup.object().shape({
   gender: Yup.string().required("Gender is required"),
   size: Yup.string().required("Size is required"),
   isAvailable: Yup.string().required("Available is required"),
+  isNewArrival: Yup.string().required("New Arrival is required"),
+  isEvent: Yup.string().required("Event is required"),
   videoURL: Yup.string(),
   image1: Yup.string(),
   image2: Yup.string(),
@@ -43,6 +45,8 @@ const initialValuesAdd = {
   gender: "",
   size: "",
   isAvailable: true,
+  isEvent: true,
+  isNewArrival: true,
   videoURL: "",
   image1: "",
   image2: "",
@@ -205,6 +209,9 @@ const Dashboard = () => {
           `${DEV_API_URL}/fish/${editData._id}`,
           {
             ...editData,
+            isAvailable: editData.isAvailable === "true" ? true : false,
+            isEvent: editData.isEvent === "true" ? true : false,
+            isNewArrival: editData.isNewArrival === "true" ? true : false,
             ...imageUrls,
           },
           {
@@ -217,8 +224,8 @@ const Dashboard = () => {
           handleCloseEditModal();
           Swal.fire({
             icon: "success",
-            title: "Add Fish Successful",
-            text: "You have successfully added a new fish.",
+            title: "Edit Fish Successful",
+            text: "You have successfully edited a fish.",
           });
           setImage1(null);
           setImage2(null);
@@ -313,6 +320,18 @@ const Dashboard = () => {
       renderCell: (params) => (params.value ? "Yes" : "No"),
     },
     {
+      field: "isEvent",
+      headerName: "Event Going",
+      width: 90,
+      renderCell: (params) => (params.value ? "Yes" : "No"),
+    },
+    {
+      field: "isNewArrival",
+      headerName: "New Arrival",
+      width: 90,
+      renderCell: (params) => (params.value ? "Yes" : "No"),
+    },
+    {
       filed: "action",
       headerName: "Action",
       width: 150,
@@ -325,7 +344,6 @@ const Dashboard = () => {
             onClick={(e) => {
               e.stopPropagation();
               handleEditModal();
-              // navigate(`/edit/${params.row.name}`);
               setEditData(params.row);
             }}
           >
@@ -369,7 +387,7 @@ const Dashboard = () => {
                     <Field
                       type="text"
                       name="name"
-                      label="Name"
+                      label="Name*"
                       as={TextField}
                       fullWidth
                       style={{ margin: "5px 0" }}
@@ -380,7 +398,7 @@ const Dashboard = () => {
                     <Field
                       type="text"
                       name="type"
-                      label="Type"
+                      label="Type*"
                       as={TextField}
                       fullWidth
                       style={{ margin: "5px 0" }}
@@ -390,7 +408,7 @@ const Dashboard = () => {
                     <Field
                       type="text"
                       name="size"
-                      label="Size"
+                      label="Size*"
                       as={TextField}
                       fullWidth
                       style={{ margin: "5px 0" }}
@@ -400,7 +418,7 @@ const Dashboard = () => {
                     <Field
                       type="number"
                       name="price"
-                      label="Price (Rp)"
+                      label="Price (Rp)*"
                       as={TextField}
                       fullWidth
                       style={{ margin: "5px 0" }}
@@ -410,7 +428,7 @@ const Dashboard = () => {
                     <Field
                       type="text"
                       name="gender"
-                      label="Gender"
+                      label="Gender*"
                       as={TextField}
                       select
                       fullWidth
@@ -421,12 +439,46 @@ const Dashboard = () => {
                       <MenuItem value="male">Male</MenuItem>
                       <MenuItem value="female">Female</MenuItem>
                     </Field>
+
+                    <Field
+                      type="text"
+                      name="isEvent"
+                      label="Event*"
+                      as={TextField}
+                      select
+                      fullWidth
+                      error={touched.isAvailable && Boolean(errors.isAvailable)}
+                      helperText={touched.isAvailable && errors.isAvailable}
+                      style={{ margin: "10px 0" }}
+                    >
+                      <MenuItem value="true">Yes</MenuItem>
+                      <MenuItem value="false">No</MenuItem>
+                    </Field>
+
+                    <p style={{ color: "red" }}>
+                      Note (*) : determined required.
+                    </p>
                   </Grid>
                   <Grid item xs={6}>
                     <Field
                       type="text"
                       name="isAvailable"
-                      label="Available"
+                      label="Available*"
+                      as={TextField}
+                      select
+                      fullWidth
+                      error={touched.isAvailable && Boolean(errors.isAvailable)}
+                      helperText={touched.isAvailable && errors.isAvailable}
+                      style={{ margin: "10px 0" }}
+                    >
+                      <MenuItem value="true">Yes</MenuItem>
+                      <MenuItem value="false">No</MenuItem>
+                    </Field>
+
+                    <Field
+                      type="text"
+                      name="isNewArrival"
+                      label="New Arrival*"
                       as={TextField}
                       select
                       fullWidth
@@ -516,7 +568,7 @@ const Dashboard = () => {
               <TextField
                 type="text"
                 name="name"
-                label="Name"
+                label="Name*"
                 fullWidth
                 value={editData?.name || ""}
                 onChange={(e) => {
@@ -528,7 +580,7 @@ const Dashboard = () => {
               <TextField
                 type="text"
                 name="type"
-                label="Type"
+                label="Type*"
                 fullWidth
                 style={{ margin: "5px 0" }}
                 value={editData?.type || ""}
@@ -539,7 +591,7 @@ const Dashboard = () => {
               <TextField
                 type="text"
                 name="size"
-                label="Size"
+                label="Size*"
                 fullWidth
                 style={{ margin: "5px 0" }}
                 value={editData?.size || ""}
@@ -550,7 +602,7 @@ const Dashboard = () => {
               <TextField
                 type="number"
                 name="price"
-                label="Price (Rp)"
+                label="Price (Rp)*"
                 fullWidth
                 style={{ margin: "5px 0" }}
                 value={editData?.price || ""}
@@ -561,7 +613,7 @@ const Dashboard = () => {
               <TextField
                 type="text"
                 name="gender"
-                label="Gender"
+                label="Gender*"
                 select
                 fullWidth
                 style={{ margin: "5px 0" }}
@@ -573,12 +625,31 @@ const Dashboard = () => {
                 <MenuItem value="male">Male</MenuItem>
                 <MenuItem value="female">Female</MenuItem>
               </TextField>
+
+              <TextField
+                type="text"
+                name="isEvent"
+                label="Event*"
+                select
+                fullWidth
+                value={editData?.isEvent || ""}
+                onChange={(e) => {
+                  setEditData({
+                    ...editData,
+                    isEvent: e.target.value,
+                  });
+                }}
+                style={{ margin: "10px 0" }}
+              >
+                <MenuItem value="true">Yes</MenuItem>
+                <MenuItem value="false">No</MenuItem>
+              </TextField>
             </Grid>
             <Grid item xs={6}>
               <TextField
                 type="text"
                 name="isAvailable"
-                label="Available"
+                label="Available*"
                 select
                 fullWidth
                 value={editData?.isAvailable || ""}
@@ -586,6 +657,24 @@ const Dashboard = () => {
                   setEditData({
                     ...editData,
                     isAvailable: e.target.value,
+                  });
+                }}
+                style={{ margin: "10px 0" }}
+              >
+                <MenuItem value="true">Yes</MenuItem>
+                <MenuItem value="false">No</MenuItem>
+              </TextField>
+              <TextField
+                type="text"
+                name="isNewArrival"
+                label="New Arrival*"
+                select
+                fullWidth
+                value={editData?.isNewArrival || ""}
+                onChange={(e) => {
+                  setEditData({
+                    ...editData,
+                    isNewArrival: e.target.value,
                   });
                 }}
                 style={{ margin: "10px 0" }}
@@ -706,7 +795,7 @@ const Dashboard = () => {
             Logout
           </Button>
 
-          <div style={{ height: 400, width: 900 }}>
+          <div style={{ height: 400, width: 1100 }}>
             <DataGrid
               getRowId={(row) => row._id}
               rows={data}
@@ -717,7 +806,6 @@ const Dashboard = () => {
                 },
               }}
               pageSizeOptions={[5, 10]}
-              // checkboxSelection
             />
           </div>
         </Paper>
